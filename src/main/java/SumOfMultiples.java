@@ -1,27 +1,24 @@
-import java.util.Arrays;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
+
+import static java.util.Arrays.stream;
 
 class SumOfMultiples {
 
-    private final int number;
-    private final Set<Integer> set;
+    private final int sum;
 
     SumOfMultiples(int number, int[] set) {
-        this.number = number;
-        this.set = Arrays.stream(set).filter(i -> i != 0).boxed().collect(Collectors.toSet());
+        IntFunction<IntStream> generateMultiples = n -> IntStream.iterate(n, x -> x < number, x -> x + n);
+
+        sum = stream(set)
+                .filter(n -> n != 0)
+                .flatMap(generateMultiples)
+                .distinct()
+                .sum();
     }
 
     int getSum() {
-        Function<Integer, IntStream> multiples = n -> IntStream.iterate(n, i -> n + i)
-                .limit((number - 1) / n);
-
-        return set.stream()
-                .flatMapToInt(multiples)
-                .distinct()
-                .sum();
+        return sum;
     }
 
 }
